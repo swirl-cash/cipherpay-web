@@ -11,3 +11,4 @@ next-env.d.ts
 # Cursor IDE
 .cursor/
 .agents/
+web-deploy-rpc-failover.tar.gz

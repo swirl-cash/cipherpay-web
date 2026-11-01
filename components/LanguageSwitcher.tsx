@@ -10,6 +10,7 @@ const LABELS: Record<string, string> = {
   pt: 'Português',
   es: 'Español',
   ar: 'العربية',
+  zh: '中文',
 };
 
 export function LanguageSwitcher() {

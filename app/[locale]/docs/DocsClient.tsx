@@ -16,26 +16,29 @@ import {
 } from '@/lib/docs-sections';
 
 import OverviewSection from './sections/OverviewSection';
-import QuickstartSection from './sections/QuickstartSection';
-import SandboxSection from './sections/SandboxSection';
-import ShopifySection from './sections/ShopifySection';
-import WooCommerceSection from './sections/WooCommerceSection';
-import CustomSection from './sections/CustomSection';
-import ProductsSection from './sections/ProductsSection';
-import POSSection from './sections/POSSection';
-import WebhooksSection from './sections/WebhooksSection';
-import SubscriptionsSection from './sections/SubscriptionsSection';
-import BillingSection from './sections/BillingSection';
-import ApiRefSection from './sections/ApiRefSection';
-import X402Section from './sections/X402Section';
-import EventsSection from './sections/EventsSection';
-import MCPSection from './sections/MCPSection';
-import ZipherCliSection from './sections/ZipherCliSection';
-import DonationsSection from './sections/DonationsSection';
-import PaymentLinksSection from './sections/PaymentLinksSection';
-import CashOutSection from './sections/CashOutSection';
-import ApiKeysSection from './sections/ApiKeysSection';
-import RecipesSection from './sections/RecipesSection';
+import ThreatModelSection from './sections/ThreatModelSection';
+import EvmOverviewSection from './sections/EvmOverviewSection';
+import EvmWalletSection from './sections/EvmWalletSection';
+import EvmRelayerSection from './sections/EvmRelayerSection';
+import BitcoinOverviewSection from './sections/BitcoinOverviewSection';
+import ReceivingSection from './sections/ReceivingSection';
+import RoundsSection from './sections/RoundsSection';
+import DenominationsSection from './sections/DenominationsSection';
+import TimingSection from './sections/TimingSection';
+import DisciplineSection from './sections/DisciplineSection';
+import LoopOutSection from './sections/LoopOutSection';
+import ChannelsSection from './sections/ChannelsSection';
+import CsvRgbSection from './sections/CsvRgbSection';
+import RgbPrivacySection from './sections/RgbPrivacySection';
+import AssetMixingSection from './sections/AssetMixingSection';
+import BridgeSection from './sections/BridgeSection';
+import FeesSection from './sections/FeesSection';
+import ReceiptsSection from './sections/ReceiptsSection';
+import ZkRoadmapSection from './sections/ZkRoadmapSection';
+import MiningSection from './sections/MiningSection';
+import GovernanceSection from './sections/GovernanceSection';
+import CliSection from './sections/CliSection';
+import TestingSection from './sections/TestingSection';
 
 function DocsGroupIcon({ icon }: { icon: DocSidebarGroupIcon }) {
   const props = {
@@ -87,46 +90,52 @@ function SectionContent({ id, onNavigate }: { id: DocSectionId; onNavigate: (id:
   switch (id) {
     case 'overview':
       return <OverviewSection onNavigate={onNavigate} />;
-    case 'quickstart':
-      return <QuickstartSection />;
-    case 'sandbox':
-      return <SandboxSection />;
-    case 'shopify':
-      return <ShopifySection />;
-    case 'woocommerce':
-      return <WooCommerceSection />;
-    case 'custom':
-      return <CustomSection />;
-    case 'recipes':
-      return <RecipesSection />;
-    case 'products':
-      return <ProductsSection />;
-    case 'payment-links':
-      return <PaymentLinksSection />;
-    case 'pos':
-      return <POSSection />;
-    case 'events':
-      return <EventsSection />;
-    case 'donations':
-      return <DonationsSection />;
-    case 'webhooks':
-      return <WebhooksSection />;
-    case 'subscriptions':
-      return <SubscriptionsSection />;
-    case 'billing':
-      return <BillingSection />;
-    case 'cash-out':
-      return <CashOutSection />;
-    case 'api-keys':
-      return <ApiKeysSection />;
-    case 'api-ref':
-      return <ApiRefSection />;
-    case 'x402':
-      return <X402Section />;
-    case 'zipher-cli':
-      return <ZipherCliSection />;
-    case 'mcp':
-      return <MCPSection />;
+    case 'threat-model':
+      return <ThreatModelSection />;
+    case 'evm-overview':
+      return <EvmOverviewSection />;
+    case 'evm-wallet':
+      return <EvmWalletSection />;
+    case 'evm-relayer':
+      return <EvmRelayerSection />;
+    case 'bitcoin-overview':
+      return <BitcoinOverviewSection />;
+    case 'receiving':
+      return <ReceivingSection />;
+    case 'rounds':
+      return <RoundsSection />;
+    case 'denominations':
+      return <DenominationsSection />;
+    case 'timing':
+      return <TimingSection />;
+    case 'discipline':
+      return <DisciplineSection />;
+    case 'loop-out':
+      return <LoopOutSection />;
+    case 'channels':
+      return <ChannelsSection />;
+    case 'csv-rgb':
+      return <CsvRgbSection />;
+    case 'rgb-privacy':
+      return <RgbPrivacySection />;
+    case 'asset-mixing':
+      return <AssetMixingSection />;
+    case 'bridge':
+      return <BridgeSection />;
+    case 'fees':
+      return <FeesSection />;
+    case 'receipts':
+      return <ReceiptsSection />;
+    case 'zk-roadmap':
+      return <ZkRoadmapSection />;
+    case 'mining':
+      return <MiningSection />;
+    case 'governance':
+      return <GovernanceSection />;
+    case 'cli':
+      return <CliSection />;
+    case 'testing':
+      return <TestingSection />;
     default:
       return null;
   }
@@ -205,7 +214,7 @@ export function DocsClient({ sectionId }: { sectionId: string }) {
             <span style={{ color: 'var(--cp-cyan)' }}>Documentation</span>
           </h1>
           <p style={{ fontSize: 11, color: 'var(--cp-text-dim)', marginTop: 4 }}>
-            Accept shielded Zcash payments. Non-custodial. Set up in minutes.
+            SWIRL — Privacy for Bitcoin &amp; EVM. Wallet architecture, privacy boundaries, infrastructure and recovery.
           </p>
         </div>
 

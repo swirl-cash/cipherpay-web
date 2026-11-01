@@ -1,0 +1,20 @@
+
+> cipherpay-web@0.1.0 dev
+> next dev --port 3001
+
+   ▲ Next.js 15.5.14
+   - Local:        http://localhost:3001
+   - Network:      http://192.168.10.104:3001
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1920ms
+ ○ Compiling /[locale] ...
+ ✓ Compiled /[locale] in 1470ms (1889 modules)
+ GET / 200 in 2403ms
+ ○ Compiling /[locale]/dapp ...
+ ✓ Compiled /[locale]/dapp in 708ms (1897 modules)
+ GET /dapp 200 in 1215ms
+ GET /pt 404 in 113ms
+ GET / 200 in 286ms
+[?25h

@@ -17,9 +17,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'CipherPay — Private Payments for the Internet',
+  metadataBase: new URL('https://swirl.cash'),
+  title: 'SWIRL — Privacy for Bitcoin & EVM',
   description:
-    'Accept Zcash in minutes. Non-custodial. Zero buyer data. No middleman.',
+    'Non-custodial privacy infrastructure for Bitcoin and EVM. One wallet experience, user-held keys, and privacy built into the way you transact.',
   manifest: '/manifest.json',
   icons: {
     icon: [
@@ -29,9 +30,9 @@ export const metadata: Metadata = {
     apple: '/apple-touch-icon.png',
   },
   openGraph: {
-    title: 'CipherPay — Private Payments for the Internet',
-    description: 'Accept Zcash in minutes. Non-custodial. Zero buyer data. No middleman.',
-    siteName: 'CipherPay',
+    title: 'SWIRL — Privacy for Bitcoin & EVM',
+    description: 'Non-custodial privacy infrastructure for Bitcoin and EVM.',
+    siteName: 'SWIRL',
     type: 'website',
     images: [{ url: '/logo-dark-bg.png', width: 694, height: 694 }],
   },
@@ -41,7 +42,7 @@ const themeScript = `
   (function() {
     try {
       var t = localStorage.getItem('theme');
-      if (!t) t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      if (t !== 'light' && t !== 'dark') t = 'dark';
       document.documentElement.classList.remove('light', 'dark');
       document.documentElement.classList.add(t);
     } catch (e) {}
@@ -60,6 +61,29 @@ const dirScript = `
   })();
 `;
 
+// Browser auto-translation (Google/Edge translate) rewrites text nodes
+// after React has rendered. When React later updates those nodes it calls
+// removeChild/insertBefore on parents that no longer own them and the whole
+// app white-screens ("client-side exception"). Guard those two primitives
+// so a translation-mutated DOM degrades gracefully instead of crashing.
+const translatePatchScript = `
+  (function() {
+    try {
+      if (typeof Node !== 'function' || !Node.prototype) return;
+      var origRemoveChild = Node.prototype.removeChild;
+      Node.prototype.removeChild = function(child) {
+        if (child && child.parentNode !== this) return child;
+        return origRemoveChild.call(this, child);
+      };
+      var origInsertBefore = Node.prototype.insertBefore;
+      Node.prototype.insertBefore = function(newNode, refNode) {
+        if (refNode && refNode.parentNode !== this) return newNode;
+        return origInsertBefore.call(this, newNode, refNode);
+      };
+    } catch (e) {}
+  })();
+`;
+
 export default function RootLayout({
   children,
 }: {
@@ -68,6 +92,7 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: translatePatchScript }} />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script dangerouslySetInnerHTML={{ __html: dirScript }} />
       </head>

@@ -1,12 +1,12 @@
 {
-  "name": "CipherPay",
-  "short_name": "CipherPay",
-  "description": "Accept shielded Zcash payments — POS, dashboard, and checkout",
-  "start_url": "/pos",
+  "name": "SWIRL",
+  "short_name": "SWIRL",
+  "description": "SWIRL — Privacy for Bitcoin & EVM",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#f8fafc",
-  "theme_color": "#0f172a",
+  "background_color": "#09090e",
+  "theme_color": "#09090e",
   "orientation": "any",
   "categories": ["finance", "business"],
   "icons": [

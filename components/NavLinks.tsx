@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { API_URL } from '@/lib/config';
 import { ThemeToggle } from './ThemeToggle';
-import { LanguageSwitcher } from './LanguageSwitcher';
 
 export function useIsLoggedIn() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
@@ -22,7 +21,6 @@ export function useIsLoggedIn() {
 }
 
 export function NavLinks() {
-  const isLoggedIn = useIsLoggedIn();
   const pathname = usePathname();
   const t = useTranslations('nav');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -56,21 +54,10 @@ export function NavLinks() {
     transition: 'color 0.15s',
   });
 
-  const authLinks = isLoggedIn === null ? (
-    <span style={{ display: 'inline-block', width: 90, height: 36 }} />
-  ) : isLoggedIn ? (
-    <Link href="/dashboard" className="btn-primary">
-      {t('dashboard')}
+  const authLinks = (
+    <Link href="/dapp" className="btn-primary">
+      OPEN SWIRL
     </Link>
-  ) : (
-    <>
-      <Link href="/dashboard/login" className="btn">
-        {t('signIn')}
-      </Link>
-      <Link href="/dashboard/register" className="btn-primary">
-        {t('getStarted')}
-      </Link>
-    </>
   );
 
   return (
@@ -79,12 +66,10 @@ export function NavLinks() {
       <div className="nav-desktop">
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <Link href="/docs" style={linkStyle('/docs')}>{t('docs')}</Link>
-          <Link href="/campaigns" style={linkStyle('/campaigns')}>{t('campaigns')}</Link>
           <Link href="/faq" style={linkStyle('/faq')}>{t('faq')}</Link>
         </div>
         <div style={{ width: 1, height: 20, background: 'var(--cp-border)', margin: '0 4px' }} />
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <LanguageSwitcher />
           <ThemeToggle />
           {authLinks}
         </div>
@@ -92,7 +77,6 @@ export function NavLinks() {
 
       {/* Mobile burger */}
       <div className="nav-mobile">
-        <LanguageSwitcher />
         <ThemeToggle />
         <button
           onClick={() => setMenuOpen(!menuOpen)}
@@ -112,7 +96,6 @@ export function NavLinks() {
         <div className="mobile-overlay" onClick={() => setMenuOpen(false)}>
           <nav className="mobile-drawer" onClick={(e) => e.stopPropagation()}>
             <Link href="/docs" style={{ ...linkStyle('/docs'), fontSize: 14, padding: '12px 0', display: 'block' }}>{t('docs')}</Link>
-            <Link href="/campaigns" style={{ ...linkStyle('/campaigns'), fontSize: 14, padding: '12px 0', display: 'block' }}>{t('campaigns')}</Link>
             <Link href="/faq" style={{ ...linkStyle('/faq'), fontSize: 14, padding: '12px 0', display: 'block' }}>{t('faq')}</Link>
             <div style={{ borderTop: '1px solid var(--cp-border)', marginTop: 8, paddingTop: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
               {authLinks}

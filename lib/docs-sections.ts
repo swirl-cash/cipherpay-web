@@ -1,61 +1,39 @@
 export const DOC_SECTIONS = [
-  { id: 'overview', title: 'Overview', shortTitle: 'Overview' },
-  { id: 'quickstart', title: 'Quickstart', shortTitle: 'Quickstart' },
-  { id: 'sandbox', title: 'Sandbox & Testing', shortTitle: 'Sandbox' },
-  { id: 'shopify', title: 'Shopify', shortTitle: 'Shopify' },
-  { id: 'woocommerce', title: 'WooCommerce', shortTitle: 'WooCommerce' },
-  { id: 'custom', title: 'Custom Integration', shortTitle: 'Custom API' },
-  { id: 'recipes', title: 'Examples', shortTitle: 'Examples' },
-  { id: 'products', title: 'Product Pages', shortTitle: 'Products' },
-  { id: 'payment-links', title: 'Payment Links', shortTitle: 'Payment Links' },
-  { id: 'pos', title: 'In-Person POS', shortTitle: 'POS' },
-  { id: 'events', title: 'Events & Tickets', shortTitle: 'Events' },
-  { id: 'donations', title: 'Donations', shortTitle: 'Donations' },
-  { id: 'cash-out', title: 'Cash Out (ZEC → Fiat)', shortTitle: 'Cash Out' },
-  { id: 'webhooks', title: 'Webhooks', shortTitle: 'Webhooks' },
-  { id: 'subscriptions', title: 'Subscriptions', shortTitle: 'Subscriptions' },
-  { id: 'billing', title: 'Billing & Fees', shortTitle: 'Billing' },
-  { id: 'api-keys', title: 'API Keys', shortTitle: 'API Keys' },
-  { id: 'api-ref', title: 'API Reference', shortTitle: 'API Reference' },
-  { id: 'x402', title: 'Agentic Payments', shortTitle: 'x402 / Agents' },
-  { id: 'zipher-cli', title: 'Zipher CLI', shortTitle: 'Zipher CLI' },
-  { id: 'mcp', title: 'MCP Server', shortTitle: 'MCP Server' },
+  { id: 'overview', title: 'SWIRL Protocol Overview', shortTitle: 'Overview' },
+  { id: 'threat-model', title: 'Privacy & Threat Model', shortTitle: 'Threat Model' },
+  { id: 'evm-overview', title: 'EVM Privacy Architecture', shortTitle: 'EVM Overview' },
+  { id: 'evm-wallet', title: 'EVM Wallet, Assets & Recovery', shortTitle: 'Wallet & Recovery' },
+  { id: 'evm-relayer', title: 'Relayers, PPOI & Submission', shortTitle: 'Relayer & PPOI' },
+  { id: 'bitcoin-overview', title: 'Bitcoin Privacy Architecture', shortTitle: 'Bitcoin Overview' },
+  { id: 'receiving', title: 'Silent Receiving (BOLT12)', shortTitle: 'Receiving' },
+  { id: 'rounds', title: 'Pool Depth & Anonymity', shortTitle: 'The Pool' },
+  { id: 'denominations', title: 'Denomination Lattice', shortTitle: 'Denominations' },
+  { id: 'timing', title: 'Timing & Order Randomization', shortTitle: 'Timing' },
+  { id: 'discipline', title: 'Usage Discipline, Enforced', shortTitle: 'Discipline' },
+  { id: 'loop-out', title: 'Submarine Loop-Out', shortTitle: 'Loop-Out' },
+  { id: 'channels', title: 'Channels & Liquidity', shortTitle: 'Channels' },
+  { id: 'csv-rgb', title: 'Client-Side Validation & RGB', shortTitle: 'RGB Basics' },
+  { id: 'rgb-privacy', title: 'RGB’s Privacy Surface', shortTitle: 'RGB Privacy' },
+  { id: 'asset-mixing', title: 'Privacy at the Asset Layer', shortTitle: 'Asset Privacy' },
+  { id: 'bridge', title: 'Cross-Chain Gateway', shortTitle: 'Bridge' },
+  { id: 'fees', title: 'Fee Schedule & Subsidies', shortTitle: 'Fees' },
+  { id: 'receipts', title: 'Receipts & Compliance Proofs', shortTitle: 'Receipts' },
+  { id: 'zk-roadmap', title: 'Zero-Knowledge Trust Roadmap', shortTitle: 'ZK Roadmap' },
+  { id: 'mining', title: 'Anonymity Mining', shortTitle: 'Mining' },
+  { id: 'governance', title: 'SWIRL Token & Governance', shortTitle: 'Governance' },
+  { id: 'cli', title: 'CLI Reference', shortTitle: 'CLI' },
+  { id: 'testing', title: 'Test Harness & Verification', shortTitle: 'Testing' },
 ] as const;
 
 export type DocSectionId = (typeof DOC_SECTIONS)[number]['id'];
 
 export const DOC_SIDEBAR_GROUPS = [
-  {
-    label: 'Getting Started',
-    icon: 'start' as const,
-    ids: ['overview', 'quickstart', 'sandbox'] as DocSectionId[],
-  },
-  {
-    label: 'Guides',
-    icon: 'guides' as const,
-    ids: [
-      'shopify',
-      'woocommerce',
-      'custom',
-      'recipes',
-      'products',
-      'payment-links',
-      'pos',
-      'events',
-      'donations',
-      'cash-out',
-    ] as DocSectionId[],
-  },
-  {
-    label: 'Reference',
-    icon: 'reference' as const,
-    ids: ['webhooks', 'subscriptions', 'billing', 'api-keys', 'api-ref'] as DocSectionId[],
-  },
-  {
-    label: 'AI & Agents',
-    icon: 'agents' as const,
-    ids: ['x402', 'zipher-cli', 'mcp'] as DocSectionId[],
-  },
+  { label: 'Start Here', icon: 'start' as const, ids: ['overview', 'threat-model'] as DocSectionId[] },
+  { label: 'EVM', icon: 'guides' as const, ids: ['evm-overview', 'evm-wallet', 'evm-relayer'] as DocSectionId[] },
+  { label: 'Bitcoin', icon: 'reference' as const, ids: ['bitcoin-overview', 'receiving', 'rounds', 'denominations', 'timing', 'discipline', 'loop-out', 'channels'] as DocSectionId[] },
+  { label: 'Research', icon: 'agents' as const, ids: ['csv-rgb', 'rgb-privacy', 'asset-mixing', 'zk-roadmap'] as DocSectionId[] },
+  { label: 'Ecosystem', icon: 'reference' as const, ids: ['bridge', 'fees', 'receipts', 'mining', 'governance'] as DocSectionId[] },
+  { label: 'Reference', icon: 'guides' as const, ids: ['cli', 'testing'] as DocSectionId[] },
 ] as const;
 
 export type DocSidebarGroupIcon = (typeof DOC_SIDEBAR_GROUPS)[number]['icon'];
@@ -70,14 +48,13 @@ export function getDocSection(id: string) {
   return DOC_SECTIONS.find((s) => s.id === id);
 }
 
-/** Path for a docs section (overview → /docs). */
 export function docsSectionPath(sectionId: DocSectionId | string): '/docs' | `/docs/${string}` {
   if (sectionId === 'overview') return '/docs';
   return `/docs/${sectionId}`;
 }
 
-export function hiddenDocSectionIds(testnet: boolean): DocSectionId[] {
-  return testnet ? [] : ['events'];
+export function hiddenDocSectionIds(_testnet: boolean): DocSectionId[] {
+  return [];
 }
 
 export function visibleDocSections(testnet: boolean) {

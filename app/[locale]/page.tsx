@@ -1,351 +1,139 @@
-import { LogoMark } from '@/components/Logo';
-import { SmartCTA } from '@/components/SmartCTA';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
-import { DemoQR } from '@/components/DemoQR';
-import { MeshGradient } from '@/components/MeshGradient';
-import { AnimatedSection, StaggerChildren, StaggerItem } from '@/components/AnimatedSection';
-import { CodeTabs } from '@/components/CodeTabs';
-import { PrivacyTable } from '@/components/PrivacyTable';
-import { AgentFlow } from '@/components/AgentFlow';
-import { IntegrationLogoBar } from '@/components/IntegrationLogoBar';
-import { UseCasesSection } from '@/components/UseCasesSection';
-import { CheckoutPrivacySection } from '@/components/CheckoutPrivacySection';
-import { getTranslations } from 'next-intl/server';
+import { Link } from '@/i18n/navigation';
 
-const codeTabs = [
-  {
-    label: 'cURL',
-    tag: 'REST API',
-    code: `curl -X POST https://api.cipherpay.app/api/invoices \\
-  -H "Authorization: Bearer cpay_sk_..." \\
-  -H "Content-Type: application/json" \\
-  -d '{"amount": 29.99, "currency": "USD", "product_name": "T-Shirt"}'
-
-# Response:
-# {
-#   "invoice_id": "a1b2c3...",
-#   "memo_code": "CP-C6CDB775",
-#   "price_zec": 0.12345678,
-#   "zcash_uri": "zcash:u1...?amount=0.12345678&memo=...",
-#   "payment_address": "u1...",
-#   "expires_at": "2026-02-21T13:30:00Z"
-# }`,
-  },
-  {
-    label: 'TypeScript',
-    tag: 'SDK',
-    code: `import CipherPay from '@cipherpay/sdk';
-
-const cp = new CipherPay('cpay_sk_...');
-
-const invoice = await cp.invoices.create({
-  amount: 29.99,
-  currency: 'USD',
-  product_name: 'T-Shirt',
-});
-
-console.log(invoice.zcash_uri);
-// → "zcash:u1...?amount=0.12345678&memo=..."`,
-  },
-  {
-    label: 'x402',
-    tag: '@cipherpay/x402',
-    code: `import { zcashPaywall } from '@cipherpay/x402/express';
-
-// One line — handles x402, MPP, and session tokens
-app.use('/api/premium', zcashPaywall({
-  amount: 0.001,
-  address: 'u1abc...',
-  apiKey: process.env.CIPHERPAY_API_KEY,
-}));
-
-// Agents pay with ZEC, you get the data
-app.get('/api/premium/data', (req, res) => {
-  res.json({ temperature: 18 });
-});`,
-  },
-  {
-    label: 'Agent CLI',
-    tag: '@cipherpay/zipher-cli',
-    code: `# Pay for a paywalled API — auto-detects x402 or MPP
-$ zipher-cli pay https://api.example.com/premium/data
-
-# Or open a prepaid session for bulk access
-$ zipher-cli session open \\
-    --merchant abc123 \\
-    --deposit 0.01 \\
-    --cost-per-request 1000
-
-# Then use the session token
-$ zipher-cli session request \\
-    --url https://api.example.com/premium/data`,
-  },
-  {
-    label: 'MCP',
-    tag: '@cipherpay/mcp',
-    code: `// Add to claude_desktop_config.json or mcp.json
-{
-  "mcpServers": {
-    "cipherpay": {
-      "command": "npx",
-      "args": ["@cipherpay/mcp"],
-      "env": {
-        "CIPHERPAY_API_KEY": "cpay_sk_..."
-      }
-    }
-  }
+function Arrow({ direction = 'right' }: { direction?: 'right' | 'down' }) {
+  return (
+    <svg className={`swirl-arrow swirl-arrow--${direction}`} viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M4 10h11M11 5l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
 }
 
-// Then ask your AI: "Verify tx abc123 paid 0.001 ZEC"
-// Or: "Open a session for merchant xyz"`,
-  },
+const principles = [
+  { number: '01', title: 'Your keys stay yours', text: 'Non-custodial by design. You control your wallet, your approvals and your assets.' },
+  { number: '02', title: 'Privacy at the protocol level', text: 'Privacy is part of the transaction experience, not an extra step you need to figure out.' },
+  { number: '03', title: 'Open infrastructure', text: 'Public code, documented architecture and a wallet experience that can grow across ecosystems.' },
 ];
 
-export default async function LandingPage() {
-  const t = await getTranslations('landing');
-
+export default function LandingPage() {
   return (
-    <div style={{ minHeight: '100vh', fontFamily: 'var(--font-geist-mono), monospace', fontSize: 13, lineHeight: 1.6 }}>
+    <div className="swirl-home">
       <SiteHeader />
 
-      {/* 1. Hero */}
-      <section style={{ padding: '100px 24px 80px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-        <MeshGradient />
-        <AnimatedSection style={{ maxWidth: 700, margin: '0 auto', position: 'relative' }}>
-          <h1 className="hero-title" style={{ fontWeight: 700, letterSpacing: -1.5, marginBottom: 20, lineHeight: 1.08 }}>
-            {t.rich('heroTitle', {
-              purple: (chunks) => <span className="hero-accent">{chunks}</span>,
-            })}
-          </h1>
-
-          <p style={{ fontSize: 15, color: 'var(--cp-text-muted)', maxWidth: 520, margin: '0 auto 36px', lineHeight: 1.8, fontWeight: 400 }}>
-            {t('heroSubtitle')}
-          </p>
-
-          <div className="hero-cta">
-            <SmartCTA className="btn-primary" style={{ padding: '14px 32px', fontSize: 12 }}>
-              {t('ctaStart')}
-            </SmartCTA>
-            <a href="#how-it-works" className="btn" style={{ padding: '14px 32px', fontSize: 12 }}>
-              {t('ctaHowItWorks')}
-            </a>
-          </div>
-
-          <IntegrationLogoBar />
-        </AnimatedSection>
-      </section>
-
-      {/* 2. Use Cases (Built For) */}
-      <UseCasesSection />
-
-      {/* 3. How it works */}
-      <section id="how-it-works" style={{ borderTop: '1px solid var(--cp-border)', padding: '80px 24px', position: 'relative', overflow: 'hidden' }}>
-        <MeshGradient variant="steps" className="mesh-gradient-steps" colors={['#00D4FF', '#8FE1FF', '#F4B728', '#FFE876']} />
-        <div style={{ maxWidth: 900, margin: '0 auto', position: 'relative' }}>
-          <AnimatedSection>
-            <div className="section-title" style={{ textAlign: 'center', marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}><LogoMark size={8} /> {t('ctaHowItWorks')}</div>
-            <h2 style={{ fontSize: 24, fontWeight: 700, textAlign: 'center', marginBottom: 56 }}>
-              {t('howItWorksTitle')}
-            </h2>
-          </AnimatedSection>
-
-          <StaggerChildren className="steps-grid">
-            <StaggerItem className="step-col">
-              <div className="step-header">
-                <div className="step-title">{t('step1')}</div>
-                <div className="step-desc">{t('step1Desc')}</div>
-              </div>
-              <div className="step-preview" aria-hidden="true">
-                <div className="step-preview-bar">
-                  <span style={{ fontSize: 7, color: 'var(--cp-cyan)', fontWeight: 700, letterSpacing: 1 }}>CIPHERPAY</span>
-                  <span style={{ fontSize: 7, color: 'var(--cp-text-dim)', letterSpacing: 1 }}>REGISTER</span>
-                </div>
-                <div style={{ padding: '10px 12px' }}>
-                  <div className="step-preview-label">STORE NAME</div>
-                  <div className="step-preview-input">Acme Store</div>
-                  <div className="step-preview-label" style={{ marginTop: 6 }}>UNIFIED VIEWING KEY</div>
-                  <div className="step-preview-input" style={{ color: 'var(--cp-text-dim)', fontSize: 8 }}>uview1qxf5rn2...k9w7mzj</div>
-                  <div className="step-preview-label" style={{ marginTop: 6 }}>DASHBOARD PASSWORD</div>
-                  <div className="step-preview-input">
-                    <span style={{ letterSpacing: 2 }}>••••••••••</span>
-                  </div>
-                  <div className="step-preview-btn">CREATE ACCOUNT</div>
-                </div>
-              </div>
-            </StaggerItem>
-
-            <StaggerItem className="step-col">
-              <div className="step-header">
-                <div className="step-title">{t('step2')}</div>
-                <div className="step-desc">{t('step2Desc')}</div>
-              </div>
-              <div className="step-preview" aria-hidden="true">
-                <div className="step-preview-bar">
-                  <span style={{ fontSize: 7, color: 'var(--cp-text-muted)', letterSpacing: 1 }}>PRODUCTS</span>
-                  <span style={{ fontSize: 7, color: 'var(--cp-cyan)', fontWeight: 600 }}>+ NEW</span>
-                </div>
-                <div style={{ padding: '6px 12px' }}>
-                  <div className="step-preview-product">
-                    <div>
-                      <div style={{ fontWeight: 600, fontSize: 9, color: 'var(--cp-text)' }}>Premium T-Shirt</div>
-                      <div style={{ fontSize: 7, color: 'var(--cp-text-dim)' }}>premium-t-shirt · one-time</div>
-                    </div>
-                    <div style={{ textAlign: 'end' }}>
-                      <div style={{ fontSize: 9, color: 'var(--cp-cyan)' }}>$29.99</div>
-                      <div style={{ fontSize: 7, color: 'var(--cp-text-dim)' }}>USD</div>
-                    </div>
-                  </div>
-                  <div className="step-preview-product">
-                    <div>
-                      <div style={{ fontWeight: 600, fontSize: 9, color: 'var(--cp-text)' }}>Hoodie</div>
-                      <div style={{ fontSize: 7, color: 'var(--cp-text-dim)' }}>hoodie · one-time</div>
-                    </div>
-                    <div style={{ textAlign: 'end' }}>
-                      <div style={{ fontSize: 9, color: 'var(--cp-cyan)' }}>€59.99</div>
-                      <div style={{ fontSize: 7, color: 'var(--cp-text-dim)' }}>EUR</div>
-                    </div>
-                  </div>
-                  <div className="step-preview-product">
-                    <div>
-                      <div style={{ fontWeight: 600, fontSize: 9, color: 'var(--cp-text)' }}>API Access</div>
-                      <div style={{ fontSize: 7, color: 'var(--cp-text-dim)' }}>api-access · recurring</div>
-                    </div>
-                    <div style={{ textAlign: 'end' }}>
-                      <div style={{ fontSize: 9, color: 'var(--cp-cyan)' }}>€9.99</div>
-                      <div style={{ fontSize: 7, color: 'var(--cp-text-dim)' }}>EUR/mo</div>
-                    </div>
-                  </div>
-                  <div className="step-preview-product">
-                    <div>
-                      <div style={{ fontWeight: 600, fontSize: 9, color: 'var(--cp-text)' }}>VPN Monthly</div>
-                      <div style={{ fontSize: 7, color: 'var(--cp-text-dim)' }}>vpn-monthly · recurring</div>
-                    </div>
-                    <div style={{ textAlign: 'end' }}>
-                      <div style={{ fontSize: 9, color: 'var(--cp-cyan)' }}>$4.99</div>
-                      <div style={{ fontSize: 7, color: 'var(--cp-text-dim)' }}>USD/mo</div>
-                    </div>
-                  </div>
-                  <div className="step-preview-product" style={{ borderBottom: 'none' }}>
-                    <div>
-                      <div style={{ fontWeight: 600, fontSize: 9, color: 'var(--cp-text)' }}>Donation</div>
-                      <div style={{ fontSize: 7, color: 'var(--cp-text-dim)' }}>donation · one-time</div>
-                    </div>
-                    <div style={{ textAlign: 'end' }}>
-                      <div style={{ fontSize: 9, color: 'var(--cp-cyan)' }}>$10.00</div>
-                      <div style={{ fontSize: 7, color: 'var(--cp-text-dim)' }}>USD</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </StaggerItem>
-
-            <StaggerItem className="step-col">
-              <div className="step-header">
-                <div className="step-title">{t('step3')}</div>
-                <div className="step-desc">{t('step3Desc')}</div>
-              </div>
-              <div className="step-preview" aria-hidden="true">
-                <div className="step-preview-bar">
-                  <span style={{ fontSize: 7, color: 'var(--cp-text-muted)', letterSpacing: 1 }}>CHECKOUT</span>
-                  <span className="step-preview-badge-pending">14:59</span>
-                </div>
-                <div style={{ padding: '8px 12px', textAlign: 'center' }}>
-                  <div style={{ fontSize: 8, letterSpacing: 1, color: 'var(--cp-text-dim)', marginBottom: 2 }}>ACME STORE</div>
-                  <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--cp-text)', marginBottom: 4 }}>Premium T-Shirt</div>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--cp-text)' }}>$29.99</div>
-                  <div style={{ fontSize: 9, color: 'var(--cp-cyan)', marginBottom: 10 }}>≈ 0.1234 ZEC</div>
-                  <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <DemoQR />
-                  </div>
-                  <div style={{ fontSize: 7, color: 'var(--cp-text-dim)', letterSpacing: 1, marginTop: 6 }}>SCAN WITH YOUR ZCASH WALLET</div>
-                  <div className="step-preview-btn" style={{ marginTop: 8 }}>OPEN IN WALLET</div>
-                </div>
-              </div>
-            </StaggerItem>
-          </StaggerChildren>
+      <main>
+        <div className="swirl-genesis-strip">
+          <Link href="/genesis" className="swirl-container swirl-genesis-link">
+            <span className="swirl-genesis-badge">SWIRL GENESIS</span>
+            <span className="swirl-genesis-copy">The early community campaign is live.</span>
+            <span className="swirl-genesis-action">Join the campaign <Arrow /></span>
+          </Link>
         </div>
-      </section>
+        <section className="swirl-hero">
+          <div className="swirl-hero-orbit" aria-hidden="true"><i /><i /><i /></div>
+          <div className="swirl-container swirl-hero-grid">
+            <div className="swirl-hero-copy">
+              <div className="swirl-eyebrow"><span /> PRIVACY FOR BITCOIN &amp; EVM</div>
+              <h1>SWIRL — Privacy for<br /><em>Bitcoin &amp; EVM</em></h1>
+              <p>SWIRL is non-custodial privacy infrastructure for Bitcoin and EVM. One wallet experience, user-held keys, and privacy built into the way you transact.</p>
+              <div className="swirl-hero-actions">
+                <Link href="/dapp" className="swirl-button swirl-button--primary">Open SWIRL <Arrow /></Link>
+                <Link href="/docs" className="swirl-button swirl-button--secondary">Explore the protocol <Arrow /></Link>
+              </div>
+              <div className="swirl-hero-proof swirl-chain-proof" aria-label="Bitcoin, Ethereum, BNB Smart Chain, Arbitrum and Polygon">
+                <span>CHAINS</span><strong>Bitcoin</strong><strong>Ethereum</strong><strong>BNB Smart Chain</strong><strong>Arbitrum</strong><strong>Polygon</strong>
+              </div>
+            </div>
 
-      {/* 4. Checkout Privacy */}
-      <CheckoutPrivacySection />
-
-      {/* 5. For Developers — all code in one place */}
-      <section style={{ borderTop: '1px solid var(--cp-border)', padding: '80px 24px' }}>
-        <AnimatedSection style={{ maxWidth: 700, margin: '0 auto' }}>
-          <div className="section-title" style={{ textAlign: 'center', marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}><LogoMark size={8} /> {t('forDevelopers')}</div>
-          <h2 style={{ fontSize: 24, fontWeight: 700, textAlign: 'center', marginBottom: 32 }}>
-            {t('oneApiCall')}
-          </h2>
-
-          <CodeTabs tabs={codeTabs} />
-        </AnimatedSection>
-      </section>
-
-      {/* 6. AI Agents — privacy table + flow diagram */}
-      <section id="agents" className="section-agents" style={{ borderTop: '1px solid var(--cp-border)', padding: '80px 24px', position: 'relative', overflow: 'hidden' }}>
-        <MeshGradient variant="agents" colors={['#8FE1FF', '#00D4FF', '#56D4C8', '#FFE876']} />
-        <div style={{ maxWidth: 900, margin: '0 auto', position: 'relative' }}>
-          <AnimatedSection>
-            <div className="section-title" style={{ textAlign: 'center', marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}><LogoMark size={8} /> {t('agentsTitle')}</div>
-            <h2 style={{ fontSize: 24, fontWeight: 700, textAlign: 'center', marginBottom: 16 }}>
-              {t('agentsSubtitle')}
-            </h2>
-            <p style={{ fontSize: 12, color: 'var(--cp-text-muted)', textAlign: 'center', maxWidth: 560, margin: '0 auto 12px', lineHeight: 1.8 }}>
-              {t('agentsDesc')}
-            </p>
-            <p style={{ fontSize: 13, color: 'var(--cp-cyan)', textAlign: 'center', fontWeight: 600, marginBottom: 40 }}>
-              {t('agentsDescHighlight')}
-            </p>
-          </AnimatedSection>
-
-          <PrivacyTable
-            header={{
-              label: <>&nbsp;</>,
-              publicLabel: t('agentsPrivacyTitle'),
-              zcashLabel: t('agentsPrivacyZcash'),
-            }}
-            rows={(['Row1', 'Row2', 'Row3', 'Row4', 'Row5'] as const).map((row) => ({
-              label: t(`agentsPrivacy${row}`),
-              publicText: t('agentsPrivacyVisible'),
-              privateText: t('agentsPrivacyHidden'),
-            }))}
-          />
-
-          <div style={{ marginTop: 24 }}>
-            <AgentFlow
-              title={t('agentsHow')}
-              tag="x402 / MPP"
-              steps={[
-                { actor: 'agent', title: t('agentsStep1'), detail: 'GET /api/premium — no credentials' },
-                { actor: 'server', title: t('agentsStep2'), detail: '402 Payment Required — amount, address, memo' },
-                { actor: 'agent', title: t('agentsStep3'), detail: 'Orchard shielded tx — sender, receiver, amount encrypted' },
-                { actor: 'cipherpay', title: t('agentsStep4'), detail: 'IVK trial decryption — stateless, no custody' },
-                { actor: 'server', title: t('agentsStep5'), detail: '200 OK — resource delivered' },
-              ]}
-            />
+            <div className="swirl-protocol-visual swirl-protocol-visual--animated">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/swirl-protocol-animated.gif" alt="SWIRL private transaction flow connecting Bitcoin and EVM" />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 7. CTA */}
-      <section style={{ borderTop: '1px solid var(--cp-border)', padding: '80px 24px', position: 'relative', overflow: 'hidden' }}>
-        <MeshGradient
-          variant="cta"
-          colors={['#8FE1FF', '#00D4FF', '#F4B728', '#FFE876']}
-        />
-        <AnimatedSection style={{ maxWidth: 500, margin: '0 auto', textAlign: 'center', position: 'relative' }}>
-          <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 12 }}>
-            {t('readyTitle')}
-          </h2>
-          <p style={{ fontSize: 12, color: 'var(--cp-text-muted)', marginBottom: 24, lineHeight: 1.8 }}>
-            {t('readySubtitle')}
-          </p>
-          <SmartCTA className="btn-primary" style={{ padding: '12px 32px', fontSize: 12 }}>
-            {t('ctaRegister')}
-          </SmartCTA>
-        </AnimatedSection>
-      </section>
+        <section className="swirl-section swirl-networks" id="protocol">
+          <div className="swirl-container">
+            <div className="swirl-section-heading">
+              <div><div className="swirl-kicker">INSIDE SWIRL · ZERO-KNOWLEDGE</div><h2>Private by math.<br />Clean by proof.</h2></div>
+              <p>SWIRL hides the link between sender and receiver with zero-knowledge proofs, and proves your funds are clean with Private Proof of Innocence. Both proofs are generated on your own device — nothing to trust, everything to verify.</p>
+            </div>
+            <div className="swirl-principle-grid">
+              <article className="swirl-principle-card">
+                <span>01</span>
+                <h3>Shield</h3>
+                <p>Deposit public assets into the SWIRL vault. Your wallet creates a private note locally — observers see a deposit, never your private balance.</p>
+              </article>
+              <article className="swirl-principle-card">
+                <span>02</span>
+                <h3>Transact privately</h3>
+                <p>Send any amount you choose — no fixed denominations. A Groth16 zero-knowledge proof, generated in your browser, authorizes the transfer without revealing sender, receiver or amount.</p>
+              </article>
+              <article className="swirl-principle-card">
+                <span>03</span>
+                <h3>Unshield</h3>
+                <p>Spend your private note to any public address. The vault releases the assets; your private history stays hidden.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section className="swirl-section swirl-boundary">
+          <div className="swirl-container swirl-boundary-grid">
+            <div><div className="swirl-kicker">PRIVATE PROOF OF INNOCENCE</div><h2>Prove it is clean.<br />Reveal nothing.</h2></div>
+            <div>
+              <p>Every deposit is screened against public sanctions and high-risk lists. Your wallet then produces a zero-knowledge proof that your funds are unlinked from those sources — verified by the network, with no identity, no history and nothing extra exposed. Bad actors stay out of the pool; honest users keep their privacy.</p>
+              <Link href="/docs">Read the PPOI docs <Arrow /></Link>
+            </div>
+          </div>
+        </section>
+
+        <section className="swirl-section swirl-wallet-section">
+          <div className="swirl-container swirl-wallet-grid">
+            <div className="swirl-wallet-copy">
+              <div className="swirl-kicker">SWIRL WALLET</div>
+              <h2>Your privacy.<br /><em>One wallet.</em></h2>
+              <p>A focused wallet experience for public and private assets. Create or import a wallet, approve every action, and keep your recovery phrase on your own device.</p>
+              <ul>
+                <li><span>✓</span><div><strong>Self-custodial by default</strong><small>Your encrypted wallet stays in your browser.</small></div></li>
+                <li><span>✓</span><div><strong>Clear transaction control</strong><small>Review connections, signatures and transfers before approval.</small></div></li>
+                <li><span>✓</span><div><strong>Built for more than one ecosystem</strong><small>A single product direction across Bitcoin and EVM.</small></div></li>
+              </ul>
+              <Link href="/extension" className="swirl-button swirl-button--primary">Download the privacy wallet <Arrow /></Link>
+            </div>
+            <div className="swirl-wallet-stage">
+              <div className="swirl-wallet-glow" aria-hidden="true" />
+              <div className="swirl-wallet-frame">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/swirl-wallet-preview.png" alt="SWIRL Wallet showing public and private asset balances on Ethereum" />
+              </div>
+              <div className="swirl-wallet-note swirl-wallet-note--top"><i /> USER-HELD KEYS</div>
+              <div className="swirl-wallet-note swirl-wallet-note--bottom">PUBLIC + PRIVATE<span>ONE OVERVIEW</span></div>
+            </div>
+          </div>
+        </section>
+
+        <section className="swirl-section swirl-principles">
+          <div className="swirl-container">
+            <div className="swirl-centered-heading"><div className="swirl-kicker">BUILT DIFFERENTLY</div><h2>Less trust. More control.</h2><p>The product is simple because the principles are not negotiable.</p></div>
+            <div className="swirl-principle-grid">
+              {principles.map((item) => <article key={item.number} className="swirl-principle-card"><span>{item.number}</span><h3>{item.title}</h3><p>{item.text}</p></article>)}
+            </div>
+          </div>
+        </section>
+
+        <section className="swirl-section swirl-boundary">
+          <div className="swirl-container swirl-boundary-grid">
+            <div><div className="swirl-kicker">PRIVACY BY DESIGN</div><h2>Privacy.<br />Not empty promises.</h2></div>
+            <div><p>SWIRL is built to protect your financial privacy while keeping you in control. With self-custody, open-source infrastructure and privacy-preserving transactions, your assets and your choices stay in your hands.</p><Link href="/docs/threat-model">Explore the privacy model <Arrow /></Link></div>
+          </div>
+        </section>
+
+        <section className="swirl-final-cta">
+          <div className="swirl-final-orbit" aria-hidden="true" />
+          <div className="swirl-container"><div className="swirl-kicker">SWIRL — PRIVACY FOR BITCOIN &amp; EVM</div><h2>Your chain.<br /><em>Your business.</em></h2><p>Open the wallet and choose where you want to begin.</p><Link href="/dapp" className="swirl-button swirl-button--primary">Enter SWIRL <Arrow /></Link></div>
+        </section>
+      </main>
 
       <SiteFooter />
     </div>

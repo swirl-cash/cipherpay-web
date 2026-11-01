@@ -1,0 +1,43 @@
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+[Error: ENOENT: no such file or directory, stat 'C:\Users\99\Documents\kimi\tasks\2026-10-18\08-33-11-5a5dee14\cipherpay-web\.next\cache\webpack\server-development\1.pack.gz'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: 'C:\\Users\\99\\Documents\\kimi\\tasks\\2026-10-18\\08-33-11-5a5dee14\\cipherpay-web\\.next\\cache\\webpack\\server-development\\1.pack.gz'
+}
+ ⨯ unhandledRejection: [Error: ENOENT: no such file or directory, stat 'C:\Users\99\Documents\kimi\tasks\2026-10-18\08-33-11-5a5dee14\cipherpay-web\.next\cache\webpack\server-development\1.pack.gz'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: 'C:\\Users\\99\\Documents\\kimi\\tasks\\2026-10-18\\08-33-11-5a5dee14\\cipherpay-web\\.next\\cache\\webpack\\server-development\\1.pack.gz'
+}
+ ⨯ unhandledRejection:  [Error: ENOENT: no such file or directory, stat 'C:\Users\99\Documents\kimi\tasks\2026-10-18\08-33-11-5a5dee14\cipherpay-web\.next\cache\webpack\server-development\1.pack.gz'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: 'C:\\Users\\99\\Documents\\kimi\\tasks\\2026-10-18\\08-33-11-5a5dee14\\cipherpay-web\\.next\\cache\\webpack\\server-development\\1.pack.gz'
+}
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, stat 'C:\Users\99\Documents\kimi\tasks\2026-10-18\08-33-11-5a5dee14\cipherpay-web\.next\cache\webpack\server-development\1.pack.gz'
+[Error: ENOENT: no such file or directory, stat 'C:\Users\99\Documents\kimi\tasks\2026-10-18\08-33-11-5a5dee14\cipherpay-web\.next\cache\webpack\client-development\2.pack.gz'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: 'C:\\Users\\99\\Documents\\kimi\\tasks\\2026-10-18\\08-33-11-5a5dee14\\cipherpay-web\\.next\\cache\\webpack\\client-development\\2.pack.gz'
+}
+ ⨯ unhandledRejection: [Error: ENOENT: no such file or directory, stat 'C:\Users\99\Documents\kimi\tasks\2026-10-18\08-33-11-5a5dee14\cipherpay-web\.next\cache\webpack\client-development\2.pack.gz'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: 'C:\\Users\\99\\Documents\\kimi\\tasks\\2026-10-18\\08-33-11-5a5dee14\\cipherpay-web\\.next\\cache\\webpack\\client-development\\2.pack.gz'
+}
+ ⨯ unhandledRejection:  [Error: ENOENT: no such file or directory, stat 'C:\Users\99\Documents\kimi\tasks\2026-10-18\08-33-11-5a5dee14\cipherpay-web\.next\cache\webpack\client-development\2.pack.gz'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: 'C:\\Users\\99\\Documents\\kimi\\tasks\\2026-10-18\\08-33-11-5a5dee14\\cipherpay-web\\.next\\cache\\webpack\\client-development\\2.pack.gz'
+}
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, stat 'C:\Users\99\Documents\kimi\tasks\2026-10-18\08-33-11-5a5dee14\cipherpay-web\.next\cache\webpack\client-development\2.pack.gz'

@@ -3,151 +3,61 @@ import { SiteFooter } from '@/components/SiteFooter';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service — CipherPay',
-  description: 'Terms of Service for CipherPay — non-custodial Zcash payment processing by Atmosphere Labs.',
+  title: 'Terms of Service — SWIRL',
+  description: 'Terms for using the SWIRL website, wallet and supported privacy infrastructure.',
 };
 
-const lastUpdated = 'March 13, 2026';
+const lastUpdated = 'October 29, 2026';
 
 export default function TermsPage() {
   return (
-    <div style={{ minHeight: '100vh', fontFamily: 'var(--font-geist-mono), monospace', fontSize: 13, lineHeight: 1.6 }}>
+    <div className="swirl-info-page">
       <SiteHeader />
+      <main className="swirl-info-main swirl-legal-main">
+        <div className="swirl-info-hero"><div className="swirl-kicker">SWIRL / LEGAL</div><h1>Terms of Service</h1><p>Last updated: {lastUpdated}</p></div>
 
-      <main style={{ maxWidth: 700, margin: '0 auto', padding: '48px 24px' }}>
-        <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8 }}>Terms of Service</h1>
-        <p style={{ color: 'var(--cp-text-muted)', fontSize: 12, marginBottom: 40 }}>
-          Last updated: {lastUpdated}
-        </p>
-
-        <Section id="01" title="Agreement">
-          <P>
-            These Terms of Service (&quot;Terms&quot;) govern your use of CipherPay, a product of
-            Atmosphere Labs (&quot;we&quot;, &quot;us&quot;). By creating an account, using our APIs,
-            checkout pages, or integrations, you agree to these Terms. If you do not agree, do not
-            use the service.
-          </P>
+        <Section id="01" title="Agreement and eligibility">
+          <P>These Terms govern your use of the SWIRL website, browser wallet, applications and supported protocol interfaces. By using the software, you agree to these Terms. You must be legally able to enter this agreement and use the software only where doing so is lawful.</P>
         </Section>
-
-        <Section id="02" title="Service description">
-          <P>
-            CipherPay provides non-custodial payment processing for shielded Zcash (ZEC). We
-            operate software that helps merchants create invoices, detect payments, and notify
-            your systems via webhooks. We do not hold customer funds; payments are settled on the
-            Zcash network according to the invoices and addresses you configure.
-          </P>
+        <Section id="02" title="Non-custodial software">
+          <P>SWIRL provides non-custodial privacy infrastructure for Bitcoin and EVM. SWIRL is not a bank, exchange, broker, custodian or financial adviser. You control your recovery phrase, keys and transaction approvals. SWIRL cannot recover a lost recovery phrase or reverse a blockchain transaction.</P>
+          <P>Available networks and features vary by release. Do not assume that a network shown as coming soon has a deployed or usable contract.</P>
         </Section>
-
-        <Section id="03" title="Accounts and API keys">
-          <P>
-            You are responsible for safeguarding API keys, webhook secrets, dashboard credentials,
-            and any recovery mechanisms. You must provide accurate registration information and
-            keep it current. You may not use the service to violate applicable law or third-party
-            rights.
-          </P>
+        <Section id="03" title="Your credentials and recovery">
+          <P>You are responsible for backing up and protecting your recovery phrase, password, receipt credentials, viewing keys and any other secret needed to access or withdraw assets. Some credentials can reveal sensitive transaction history; share them only when you understand the consequences.</P>
+          <P>Loss of the required credentials, device and backups can permanently prevent recovery. SWIRL cannot recreate secrets that were generated or encrypted only on your device.</P>
         </Section>
-
-        <Section id="04" title="Acceptable use">
-          <P>
-            You may not use CipherPay to facilitate fraud, money laundering, sanctions evasion,
-            or illegal commerce. We may suspend or terminate access if we reasonably believe the
-            service is being abused or if required by law or payment-network rules.
-          </P>
+        <Section id="04" title="Transactions, fees and third parties">
+          <P>Transactions may require network fees, protocol fees or Relayer fees. Applicable costs are shown before submission where supported. Quotes can expire, networks can congest and transactions can fail.</P>
+          <P>RPC providers, indexers, Relayers, dApps, token issuers, blockchains and external links are independent services. Their availability, conduct and terms are outside our control. A Relayer may submit transactions and pay gas but does not receive your spending keys.</P>
         </Section>
-
-        <Section id="05" title="Fees and billing">
-          <P>
-            Platform fees, billing cycles, and settlement rules are described in your dashboard
-            and documentation. Fee rates may change with notice where required. You remain
-            responsible for any amounts owed under your merchant agreement with us.
-          </P>
+        <Section id="05" title="Privacy boundaries">
+          <P>Privacy features do not guarantee absolute anonymity. Public blockchain records, network metadata, timing, amounts, endpoint behavior and the available privacy set can expose information. You are responsible for reviewing every address, network, amount and approval before confirming it.</P>
         </Section>
-
-        <Section id="06" title="Third-party integrations">
-          <P>
-            Integrations (e.g. Shopify, WooCommerce, custom sites) are subject to those
-            platforms&apos; own terms. We are not affiliated with Automattic, WooCommerce, or
-            Shopify unless expressly stated in a separate agreement.
-          </P>
+        <Section id="06" title="Acceptable use">
+          <P>Do not use the software to violate applicable law, infringe rights, distribute malware, interfere with networks or services, bypass security controls, or facilitate fraud, theft or other unlawful activity. You are responsible for complying with sanctions, tax and other requirements that apply to you.</P>
         </Section>
-
-        <Section id="07" title="Disclaimer of warranties">
-          <P>
-            The service is provided &quot;as is&quot; and &quot;as available&quot; without
-            warranties of any kind, whether express or implied, including merchantability, fitness
-            for a particular purpose, and non-infringement, to the fullest extent permitted by law.
-          </P>
+        <Section id="07" title="Genesis campaign and vSWIRL">
+          <P>The Genesis campaign binds one X account to one seat. vSWIRL is a non-transferable points credential used to calculate campaign allocations; it is not the SWIRL token, a security or a promise of future value. Seats obtained through spam, Sybil clusters or fake engagement may be removed.</P>
         </Section>
-
-        <Section id="08" title="Limitation of liability">
-          <P>
-            To the fullest extent permitted by law, Atmosphere Labs and its contributors will not
-            be liable for any indirect, incidental, special, consequential, or exemplary damages, or
-            any loss of profits, revenues, goodwill, or data, arising from your use of CipherPay.
-            Our aggregate liability for any claim relating to the service shall not exceed the
-            amount you paid us in fees for the service in the three (3) months preceding the claim,
-            or one hundred US dollars (USD $100), whichever is greater.
-          </P>
+        <Section id="08" title="Software risk and no warranty">
+          <P>Cryptographic systems, smart contracts, wallet software and third-party infrastructure may contain defects or be attacked. Features and deployments can change as the software develops. The software is provided “as is” and “as available”, without warranties to the maximum extent permitted by law.</P>
         </Section>
-
-        <Section id="09" title="Open source">
-          <P>
-            Portions of CipherPay may be distributed under open-source licenses (e.g. GPLv2 or
-            later for the WooCommerce plugin). Your use of such components is governed by those
-            licenses in addition to these Terms where applicable.
-          </P>
+        <Section id="09" title="Limitation of liability">
+          <P>To the maximum extent permitted by law, SWIRL contributors will not be liable for indirect, incidental, special or consequential losses arising from lost credentials, user error, failed transactions, unavailable services, malicious dApps, market movements or third-party infrastructure.</P>
         </Section>
-
         <Section id="10" title="Changes">
-          <P>
-            We may update these Terms from time to time. We will post the revised version on this
-            page and update the &quot;Last updated&quot; date. Continued use after changes constitutes
-            acceptance of the revised Terms.
-          </P>
-        </Section>
-
-        <Section id="11" title="Governing law">
-          <P>
-            These Terms are governed by the laws applicable to Atmosphere Labs in its place of
-            incorporation or principal place of business, without regard to conflict-of-law
-            principles, except where mandatory consumer protections apply in your jurisdiction.
-          </P>
-        </Section>
-
-        <Section id="12" title="Contact">
-          <P>
-            For legal or terms questions:{' '}
-            <a href="mailto:legal@cipherpay.app" style={{ color: 'var(--cp-cyan)', textDecoration: 'none' }}>
-              legal@cipherpay.app
-            </a>
-          </P>
+          <P>Features and these Terms may change as the software develops. Material changes will be posted on this page with an updated date and announced on <a href="https://x.com/swirlbtc" target="_blank" rel="noopener noreferrer">@swirlbtc</a>. Continued use after an update constitutes acceptance of the updated Terms.</P>
         </Section>
       </main>
-
       <SiteFooter />
     </div>
   );
 }
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
-  return (
-    <div style={{ marginBottom: 40 }}>
-      <div className="panel">
-        <div className="panel-header">
-          <span className="panel-title">{id} // {title}</span>
-        </div>
-        <div style={{ padding: '16px 18px' }}>
-          {children}
-        </div>
-      </div>
-    </div>
-  );
+  return <section className="swirl-legal-section"><div className="swirl-legal-section-title"><span>{id}</span><h2>{title}</h2></div><div>{children}</div></section>;
 }
-
 function P({ children }: { children: React.ReactNode }) {
-  return (
-    <p style={{ fontSize: 12, color: 'var(--cp-text-muted)', lineHeight: 1.8, marginTop: 0, marginBottom: 12 }}>
-      {children}
-    </p>
-  );
+  return <p className="swirl-legal-paragraph">{children}</p>;
 }

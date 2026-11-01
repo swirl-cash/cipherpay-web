@@ -1,109 +1,33 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslations } from 'next-intl';
-import { Link } from '@/i18n/navigation';
 import { LogoMark } from '@/components/Logo';
-import { AnimatedSection } from '@/components/AnimatedSection';
-import { AgentTerminalVisual } from '@/components/AgentTerminalVisual';
+import { AnimatedSection, StaggerChildren, StaggerItem } from '@/components/AnimatedSection';
 
-const CYCLE_MS = 5000;
-
-function IconGlobe({ size = 16 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <path d="M2 12h20" />
-      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z" />
-    </svg>
-  );
-}
-
-function IconTablet({ size = 16 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="4" y="2" width="16" height="20" rx="2" ry="2" />
-      <line x1="12" y1="18" x2="12" y2="18" strokeWidth="2" />
-    </svg>
-  );
-}
-
-function IconTerminal({ size = 16 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="4 17 10 11 4 5" />
-      <line x1="12" y1="19" x2="20" y2="19" />
-    </svg>
-  );
-}
-
-const USE_CASES = [
+const LAYERS = [
   {
     key: 'online' as const,
-    href: '/docs/shopify',
-    external: false,
-    image: '/use-cases/shopify-store.png',
-    imagePosition: 'top' as const,
-    icon: IconGlobe,
+    num: '01',
+    tech: 'BOLT12 OFFERS · ONION MESSAGES',
   },
   {
     key: 'inPerson' as const,
-    href: '/docs/pos',
-    external: false,
-    image: '/use-cases/pos-retail.png',
-    imagePosition: 'center' as const,
-    icon: IconTablet,
+    num: '02',
+    tech: 'BLINDED PATHS · 3 HOPS',
   },
   {
     key: 'agents' as const,
-    href: '/docs/x402',
-    external: false,
-    variant: 'terminal' as const,
-    icon: IconTerminal,
+    num: '03',
+    tech: 'SUBMARINE SWAPS · LOOP-OUT',
   },
 ] as const;
 
 export function UseCasesSection() {
   const t = useTranslations('landing.useCases');
-  const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const startRef = useRef(Date.now());
-
-  const advance = useCallback(() => {
-    setActive((prev) => (prev + 1) % USE_CASES.length);
-    setProgress(0);
-    startRef.current = Date.now();
-  }, []);
-
-  useEffect(() => {
-    if (paused) return;
-    startRef.current = Date.now();
-    setProgress(0);
-
-    const frame = () => {
-      const elapsed = Date.now() - startRef.current;
-      const pct = Math.min(elapsed / CYCLE_MS, 1);
-      setProgress(pct);
-      if (pct >= 1) {
-        advance();
-      } else {
-        rafId = requestAnimationFrame(frame);
-      }
-    };
-    let rafId = requestAnimationFrame(frame);
-    return () => cancelAnimationFrame(rafId);
-  }, [active, paused, advance]);
-
-  const handleSelect = (idx: number) => {
-    setActive(idx);
-    setProgress(0);
-    startRef.current = Date.now();
-  };
 
   return (
-    <section id="use-cases" className="uc-section">
-      <div className="uc-container">
+    <section id="use-cases" style={{ borderTop: '1px solid var(--cp-border)', padding: '80px 24px' }}>
+      <div style={{ maxWidth: 900, margin: '0 auto' }}>
         <AnimatedSection>
           <div
             className="section-title"
@@ -118,127 +42,40 @@ export function UseCasesSection() {
           >
             <LogoMark size={8} /> {t('title')}
           </div>
-          <h2 className="uc-heading">{t('subtitle')}</h2>
-          <p className="uc-intro">{t('intro')}</p>
+          <h2 style={{ fontSize: 24, fontWeight: 700, textAlign: 'center', marginBottom: 12 }}>
+            {t('subtitle')}
+          </h2>
+          <p style={{ fontSize: 12, color: 'var(--cp-text-muted)', textAlign: 'center', maxWidth: 520, margin: '0 auto 48px', lineHeight: 1.8 }}>
+            {t('intro')}
+          </p>
         </AnimatedSection>
 
-        <div
-          className="uc-panel"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => {
-            setPaused(false);
-            startRef.current = Date.now() - progress * CYCLE_MS;
-          }}
-        >
-          {/* Visual area */}
-          <div className="uc-visual">
-            {USE_CASES.map((uc, idx) => (
-              <div
-                key={uc.key}
-                className={`uc-visual-slide ${idx === active ? 'uc-visual-slide--active' : ''}`}
-              >
-                {'variant' in uc && uc.variant === 'terminal' ? (
-                  <div className="uc-visual-terminal-wrap">
-                    <AgentTerminalVisual className="uc-terminal" />
-                  </div>
-                ) : (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img
-                    src={'image' in uc ? uc.image : ''}
-                    alt=""
-                    className="uc-visual-img"
-                    style={{
-                      objectPosition: 'imagePosition' in uc && uc.imagePosition === 'center' ? 'center' : 'top center',
-                    }}
-                  />
-                )}
+        <StaggerChildren className="steps-grid">
+          {LAYERS.map((layer) => (
+            <StaggerItem key={layer.key} className="step-col">
+              <div className="step-header">
+                <div className="step-title">
+                  <span style={{ color: 'var(--cp-cyan)', marginRight: 8 }}>{layer.num}</span>
+                  {t(`${layer.key}Title`)}
+                </div>
+                <div className="step-desc">{t(`${layer.key}Desc`)}</div>
               </div>
-            ))}
-          </div>
-
-          {/* Tab list */}
-          <div className="uc-tabs" role="tablist" aria-label={t('tabsAriaLabel')}>
-            {USE_CASES.map((uc, idx) => {
-              const isActive = idx === active;
-              return (
-                <div
-                  key={uc.key}
-                  role="presentation"
-                  className={`uc-tab ${isActive ? 'uc-tab--active' : ''}`}
-                >
-                  <div className="uc-tab-progress">
-                    <div
-                      className="uc-tab-progress-bar"
-                      style={{ transform: `scaleX(${isActive ? progress : 0})` }}
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    role="tab"
-                    aria-selected={isActive}
-                    className="uc-tab-trigger"
-                    onClick={() => handleSelect(idx)}
-                  >
-                    <h3 className="uc-tab-title">
-                      <uc.icon size={14} />
-                      {t(`${uc.key}Title`)}
-                    </h3>
-                    <p className="uc-tab-desc">{t(`${uc.key}Desc`)}</p>
-                  </button>
-                  <span className="uc-tab-cta">
-                    {uc.external ? (
-                      <a href={uc.href}>{t('learnMore')}</a>
-                    ) : (
-                      <Link href={uc.href}>{t('learnMore')}</Link>
-                    )}
+              <div className="step-preview" aria-hidden="true">
+                <div className="step-preview-bar">
+                  <span style={{ fontSize: 7, color: 'var(--cp-cyan)', fontWeight: 700, letterSpacing: 1 }}>
+                    LAYER {layer.num}
                   </span>
+                  <span style={{ fontSize: 7, color: 'var(--cp-text-dim)', letterSpacing: 1 }}>ACTIVE</span>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Mobile card fallback */}
-        <div className="uc-mobile-cards">
-          {USE_CASES.map((uc) => {
-            const card = (
-              <article className="use-case-card">
-                <div
-                  className={`use-case-card-media ${'variant' in uc && uc.variant === 'terminal' ? 'use-case-card-media--terminal' : ''}`}
-                >
-                  {'variant' in uc && uc.variant === 'terminal' ? (
-                    <AgentTerminalVisual className="use-case-card-terminal" />
-                  ) : (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img
-                      src={'image' in uc ? uc.image : ''}
-                      alt=""
-                      className="use-case-card-img"
-                      style={{
-                        objectPosition: 'imagePosition' in uc && uc.imagePosition === 'center' ? 'center' : 'top center',
-                      }}
-                    />
-                  )}
+                <div style={{ padding: '14px 12px', display: 'flex', alignItems: 'center', minHeight: 56 }}>
+                  <code style={{ fontSize: 9, letterSpacing: 1, color: 'var(--cp-text-muted)' }}>
+                    {layer.tech}
+                  </code>
                 </div>
-                <div className="use-case-body">
-                  <h3 className="use-case-title">
-                    <uc.icon size={14} />
-                    {t(`${uc.key}Title`)}
-                  </h3>
-                  <p className="use-case-desc">{t(`${uc.key}Desc`)}</p>
-                  <span className="use-case-cta">{t('learnMore')}</span>
-                </div>
-              </article>
-            );
-            return uc.external ? (
-              <a key={uc.key} href={uc.href} className="use-case-card-link">{card}</a>
-            ) : (
-              <Link key={uc.key} href={uc.href} className="use-case-card-link">{card}</Link>
-            );
-          })}
-        </div>
-
-        <p className="uc-footnote">{t('checkoutNote')}</p>
+              </div>
+            </StaggerItem>
+          ))}
+        </StaggerChildren>
       </div>
     </section>
   );

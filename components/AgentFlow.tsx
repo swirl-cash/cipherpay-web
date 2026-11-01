@@ -21,9 +21,9 @@ const rowVariants = {
 };
 
 const actorLabel: Record<AgentFlowStep['actor'], string> = {
-  agent: 'Agent',
-  server: 'Server',
-  cipherpay: 'CipherPay',
+  agent: 'Payer',
+  server: 'Mix',
+  cipherpay: 'SWIRL',
 };
 
 export function AgentFlow({ title, tag, steps }: AgentFlowProps) {

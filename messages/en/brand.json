@@ -1,13 +1,13 @@
 {
   "title": "Brand Assets",
-  "subtitle": "Download CipherPay logos and icons for press, integrations, and partner listings.",
+  "subtitle": "Download SWIRL logos and icons for press, integrations, and partner listings.",
   "logosTitle": "Logos",
   "iconsTitle": "Icons",
   "download": "Download",
   "usageTitle": "Usage",
-  "usage1": "Use these assets when referring to CipherPay in directories, press, or partner pages.",
+  "usage1": "Use these assets when referring to SWIRL in directories, press, or partner pages.",
   "usage2": "Do not modify the logo colors or proportions. Keep clear space around the mark.",
-  "usage3": "CipherPay is a product of Atmosphere Labs. Link back to cipherpay.app when possible.",
+  "usage3": "SWIRL is a mixing protocol for Lightning. Link back to swirl.cash when possible.",
   "assets": {
     "logoFull": "Full logo (transparent)",
     "logoDark": "Full logo (dark background)",

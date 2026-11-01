@@ -3,5 +3,5 @@
 import { QRCode } from './QRCode';
 
 export function DemoQR() {
-  return <QRCode data="zcash:u1demo?amount=0.12345678&memo=Q1AtQTFCMkMz" size={72} />;
+  return <QRCode data="lightning:lno1zcp8x4vqdemo" size={72} />;
 }

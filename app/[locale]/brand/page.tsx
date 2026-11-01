@@ -4,8 +4,8 @@ import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Brand Assets — CipherPay',
-  description: 'Download CipherPay logos and icons for press, integrations, and partner listings.',
+  title: 'Brand Assets — SWIRL',
+  description: 'Download SWIRL logos and icons for press, integrations, and partner listings.',
 };
 
 const ASSETS = [

@@ -9,27 +9,20 @@ export function SiteFooter() {
 
   return (
     <footer className="site-footer">
-      <div className="footer-links footer-links-primary">
-        <Link href="/docs">{t('docs')}</Link>
-        <Link href="/campaigns">{t('campaigns')}</Link>
-        <Link href="/faq">{t('faq')}</Link>
-        <Link href="/brand">{t('brand')}</Link>
-        <a href="https://zecmap.com/" target="_blank" rel="noopener noreferrer">{t('zecmap')}</a>
-        <a href="https://cipherscan.app" target="_blank" rel="noopener noreferrer">CipherScan</a>
-        <a href="https://zipher.to" target="_blank" rel="noopener noreferrer">Zipher</a>
-        <Link href="/privacy">{t('privacy')}</Link>
-        <Link href="/terms">{t('terms')}</Link>
-      </div>
-      <div className="footer-links footer-links-social">
-        <a href="https://github.com/atmospherelabs-dev" target="_blank" rel="noopener noreferrer">GitHub</a>
-        <a href="https://www.youtube.com/@AtmosphereLabsDev" target="_blank" rel="noopener noreferrer">YouTube</a>
-        <a href="https://x.com/cipherpay_app" target="_blank" rel="noopener noreferrer">𝕏</a>
-      </div>
-      <div className="footer-bottom">
+      <div className="footer-main">
         <span className="footer-brand">
-          <Logo size="sm" />
+          <Logo size="md" />
         </span>
-        <span className="footer-copy">© {new Date().getFullYear()} Atmosphere Labs</span>
+        <div className="footer-links footer-links-primary">
+          <Link href="/docs">{t('docs')}</Link>
+          <Link href="/faq">{t('faq')}</Link>
+          <Link href="/brand">{t('brand')}</Link>
+          <Link href="/privacy">{t('privacy')}</Link>
+          <Link href="/terms">{t('terms')}</Link>
+          <a href="https://github.com/swirl-cash" target="_blank" rel="noopener noreferrer">GITHUB</a>
+          <a href="https://x.com/swirlbtc" target="_blank" rel="noopener noreferrer" aria-label="X">𝕏</a>
+        </div>
+        <span className="footer-copy">© {new Date().getFullYear()} SWIRL · Privacy for Bitcoin &amp; EVM</span>
       </div>
     </footer>
   );
