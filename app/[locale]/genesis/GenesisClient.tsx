@@ -22,6 +22,7 @@ const IC: Record<string, string[]> = {
   boost: ['M13 2L4.5 13.5H11L9.5 22 19 10h-6.5L13 2z'],
   voice: ['M12 15a3 3 0 003-3V5a3 3 0 00-6 0v7a3 3 0 003 3z', 'M19 11a7 7 0 01-14 0', 'M12 18v4'],
   daily: ['M8 2v4', 'M16 2v4', 'M3 9h18', 'M5 4h14a2 2 0 012 2v13a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z'],
+  shield: ['M12 3l7 3v5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6l7-3z', 'M9.5 11.5l2 2 3.5-4'],
   star: ['M12 2l3 6.5 7 .8-5.2 4.8 1.4 7L12 17.5 5.8 21l1.4-7L2 9.3l7-.8z'],
 };
 
@@ -47,6 +48,7 @@ const POINT_ROWS: Array<[string, string, string[]]> = [
   ['COMPLETE ALL TASKS', '+1,000', IC.tasks],
   ['DIRECT INVITE', '+200', IC.follow],
   ['TIER-2 INVITE', '+50', IC.boost],
+  ['DAILY SHIELD + UNSHIELD', '+150', IC.shield],
 ];
 
 const OG_BENEFITS: string[] = [
@@ -101,7 +103,7 @@ export default function GenesisClient() {
 
   /* ── live session + seat state ── */
   const [session, setSession] = useState<{ id: string; handle: string; name: string; avatar: string } | null>(null);
-  const [me, setMe] = useState<{ code: string; direct: number; tier2: number; points: number; t1: boolean; t2: boolean; t3: boolean; og: boolean; checkinDays: number; checkedInToday: boolean; featured: string } | null>(null);
+  const [me, setMe] = useState<{ code: string; direct: number; tier2: number; points: number; t1: boolean; t2: boolean; t3: boolean; og: boolean; checkinDays: number; checkedInToday: boolean; featured: string; cycleDays: number; cycleClaimedToday: boolean; taskWallet: string | null } | null>(null);
   const [authError, setAuthError] = useState('');
   const [followState, setFollowState] = useState<'idle' | 'checking' | 'verified' | 'missing' | 'error'>('idle');
   const [boostState, setBoostState] = useState<'idle' | 'saving' | 'done'>('idle');
@@ -114,7 +116,10 @@ export default function GenesisClient() {
   const [featuredBusy, setFeaturedBusy] = useState(false);
   const [featuredErr, setFeaturedErr] = useState('');
   const [board, setBoard] = useState<Array<{ handle: string; name: string; avatar: string; og: boolean; direct: number; tier2: number; points: number }> | null>(null);
-  const [myRank, setMyRank] = useState<{ rank: number; total: number; breakdown?: { tasks: number; direct: number; tier2: number; daily: number; featured: number; total: number } } | null>(null);
+  const [myRank, setMyRank] = useState<{ rank: number; total: number; breakdown?: { tasks: number; direct: number; tier2: number; daily: number; cycle: number; featured: number; total: number } } | null>(null);
+  const [cycleAddr, setCycleAddr] = useState('');
+  const [cycleBusy, setCycleBusy] = useState(false);
+  const [cycleErr, setCycleErr] = useState('');
 
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
@@ -146,6 +151,7 @@ export default function GenesisClient() {
         const rd = await rr.json();
         if (rd?.seat) {
           setMe(rd.seat);
+          if (rd.seat.taskWallet) setCycleAddr(rd.seat.taskWallet);
           if (rd.seat.t1) setFollowState('verified');
           if (rd.seat.t2) setBoostState('done');
           if (rd.seat.t3) setPostState('verified');
@@ -269,6 +275,36 @@ export default function GenesisClient() {
       }
     } catch { /* network hiccup — leave state untouched */ }
     setCheckinBusy(false);
+  };
+
+  const verifyCycleTask = async () => {
+    setCycleBusy(true);
+    setCycleErr('');
+    try {
+      const r = await fetch('/api/genesis/verify/cycle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address: cycleAddr.trim() }),
+      });
+      if (r.status === 401) { setSession(null); setMe(null); return; }
+      const d = await r.json();
+      if (d.ok) {
+        setMe((prev) =>
+          prev
+            ? {
+                ...prev,
+                cycleClaimedToday: true,
+                cycleDays: d.days ?? prev.cycleDays,
+                taskWallet: cycleAddr.trim().toLowerCase(),
+                points: prev.points + (d.already ? 0 : 150),
+              }
+            : prev,
+        );
+      } else {
+        setCycleErr(d.reason || d.error || 'error');
+      }
+    } catch { setCycleErr('error'); }
+    setCycleBusy(false);
   };
 
   const submitFeaturedPost = async () => {
@@ -833,6 +869,64 @@ export default function GenesisClient() {
                         <div className="gz-task-d" style={{ marginTop: 10 }}>under manual review — result lands on your seat</div>
                       )}
                     </div>
+
+                    {/* D3 — daily Shield + Unshield cycle, mainnet, verified on-chain */}
+                    <div className="gz-task">
+                      <div className="gz-task-top">
+                        <span className="gz-task-id"><Ic p={IC.shield} size={13} />D3 · DAILY · ETHEREUM MAINNET</span>
+                        {me?.cycleClaimedToday
+                          ? <span className="gz-badge gz-badge-ok">✓ TODAY</span>
+                          : <span className="gz-badge gz-badge-todo">+150 vSWIRL</span>}
+                      </div>
+                      <div className="gz-task-t">Shield + Unshield cycle</div>
+                      <div className="gz-task-d">
+                        On Ethereum mainnet, shield any amount and unshield it back — one pair, both sides, same UTC day. We verify the pair on-chain against the address you submit. +150 vSWIRL per day · days completed: {me?.cycleDays ?? 0}.
+                      </div>
+                      {!me?.cycleClaimedToday && (
+                        <div className="gz-task-act">
+                          <div style={{ display: 'flex', gap: 10 }}>
+                            <input
+                              className="gz-input"
+                              placeholder="your EVM wallet address — 0x…"
+                              value={cycleAddr}
+                              onChange={(e) => setCycleAddr(e.target.value)}
+                              spellCheck={false}
+                            />
+                            <button
+                              className="gz-btn gz-btn-cy gz-btn-sm"
+                              disabled={cycleBusy || !/^0x[0-9a-fA-F]{40}$/.test(cycleAddr.trim())}
+                              onClick={verifyCycleTask}
+                            >
+                              {cycleBusy ? 'VERIFYING…' : 'VERIFY +150'}
+                            </button>
+                          </div>
+                          {cycleErr === 'bad_address' && (
+                            <div className="gz-err">that is not a valid EVM address — it should look like 0x…</div>
+                          )}
+                          {cycleErr === 'no_shield' && (
+                            <div className="gz-err">no mainnet Shield from this address found today (UTC) — shield first, wait for confirmation, then verify</div>
+                          )}
+                          {cycleErr === 'no_unshield' && (
+                            <div className="gz-err">Shield found, but no matching Unshield today — the pair must complete within the same UTC day</div>
+                          )}
+                          {cycleErr === 'address_used' && (
+                            <div className="gz-err">this address already claimed today&apos;s reward on another seat</div>
+                          )}
+                          {cycleErr === 'verify_unavailable' && (
+                            <div className="gz-err">chain lookup unavailable — try again in a moment</div>
+                          )}
+                          {cycleErr === 'rate_limited' && (
+                            <div className="gz-err">too many attempts — wait a minute and retry</div>
+                          )}
+                          {cycleErr === 'error' && (
+                            <div className="gz-err">verification failed — try again in a moment</div>
+                          )}
+                        </div>
+                      )}
+                      {me?.cycleClaimedToday && me.taskWallet && (
+                        <div className="gz-task-d" style={{ marginTop: 10 }}>verified with {me.taskWallet.slice(0, 8)}…{me.taskWallet.slice(-6)} · come back tomorrow</div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1014,6 +1108,7 @@ export default function GenesisClient() {
                 ['DIRECT INVITES', '+200 per seat', myRank.breakdown.direct],
                 ['TIER-2 INVITES', '+50 per seat', myRank.breakdown.tier2],
                 ['DAILY CHECK-IN', '+5 per day', myRank.breakdown.daily],
+                ['SHIELD + UNSHIELD', '+150 per day', myRank.breakdown.cycle],
                 ['FEATURED POST', '+5,000 once, reviewed', myRank.breakdown.featured],
               ] as Array<[string, string, number]>).map(([label, hint, pts]) => (
                 <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '9px 0', borderBottom: '1px dashed var(--c-line)', opacity: pts > 0 ? 1 : .45 }}>

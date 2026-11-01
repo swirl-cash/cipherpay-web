@@ -25,11 +25,15 @@ export interface SeatRec {
   lastCheckin: string | null; // UTC date of the last daily check-in (YYYY-MM-DD)
   checkinDays: number;        // total check-in days — +5 vSWIRL each
   featured: { url: string; status: FeaturedStatus; at: number } | null; // featured post — manual review, one-time
+  taskWallet: string | null;   // EVM address submitted for the privacy-cycle task
+  cycleLastClaim: string | null; // UTC date of the last privacy-cycle claim
+  cycleDays: number;            // completed Shield+Unshield cycle days — +150 vSWIRL each
   createdAt: number;
 }
 
 interface Store {
   seats: Record<string, SeatRec>;
+  cycleClaims?: Record<string, string>; // `${YYYY-MM-DD}:${address}` -> seat id — one claim per address per day
 }
 
 let cache: Store | null = null;
@@ -44,6 +48,7 @@ function load(): Store {
   if (!cache.seats) cache.seats = {};
   // one-time migrations
   let dirty = false;
+  if (!cache.cycleClaims) { cache.cycleClaims = {}; dirty = true; }
   for (const u of Object.values(cache.seats)) {
     if (u.code.startsWith('sbt20-genesis-')) {
       u.code = newCode(cache);
@@ -64,6 +69,9 @@ function load(): Store {
     if (typeof u.lastCheckin !== 'string' && u.lastCheckin !== null) { u.lastCheckin = null; dirty = true; }
     if (typeof u.checkinDays !== 'number') { u.checkinDays = 0; dirty = true; }
     if (typeof u.featured === 'undefined') { u.featured = null; dirty = true; }
+    if (typeof u.taskWallet !== 'string' && u.taskWallet !== null) { u.taskWallet = null; dirty = true; }
+    if (typeof u.cycleLastClaim !== 'string' && u.cycleLastClaim !== null) { u.cycleLastClaim = null; dirty = true; }
+    if (typeof u.cycleDays !== 'number') { u.cycleDays = 0; dirty = true; }
   }
   if (dirty) save(cache);
   return cache;
@@ -119,6 +127,9 @@ export function ensureSeat(p: { id: string; handle: string; name: string; avatar
     lastCheckin: null,
     checkinDays: 0,
     featured: null,
+    taskWallet: null,
+    cycleLastClaim: null,
+    cycleDays: 0,
     createdAt: Date.now(),
   };
   s.seats[p.id] = rec;
@@ -193,6 +204,7 @@ export function setOg(id: string, flag: boolean) {
 /* ── scoring ── */
 export const CHECKIN_POINTS = 5;
 export const FEATURED_POINTS = 5000;
+export const CYCLE_POINTS = 150;
 
 function pointsOf(all: SeatRec[], me: SeatRec): { direct: number; tier2: number; points: number } {
   const direct = all.filter((u) => u.referrer === me.id);
@@ -206,6 +218,7 @@ function pointsOf(all: SeatRec[], me: SeatRec): { direct: number; tier2: number;
     tier2 * 50 +
     (fullSet ? 1000 : 0) +
     me.checkinDays * CHECKIN_POINTS +
+    me.cycleDays * CYCLE_POINTS +
     featuredBonus;
   return { direct: direct.length, tier2, points };
 }
@@ -225,6 +238,36 @@ export function checkin(id: string): { ok: boolean; already?: boolean; days?: nu
   me.checkinDays += 1;
   save(s);
   return { ok: true, days: me.checkinDays };
+}
+
+/* ── daily privacy cycle (Shield + Unshield on mainnet) ── */
+
+/* Remember the address a seat verifies with, so returning players prefill. */
+export function bindTaskWallet(id: string, address: string) {
+  const s = load();
+  const me = s.seats[id];
+  if (!me) return;
+  me.taskWallet = address.toLowerCase();
+  save(s);
+}
+
+/* Award today's cycle once per seat, and once per address across all seats —
+   on-chain activity cannot be double-claimed by two X accounts. */
+export function claimCycle(id: string, address: string): { ok: boolean; already?: boolean; reason?: string; days?: number } {
+  const s = load();
+  const me = s.seats[id];
+  if (!me) return { ok: false, reason: 'no_seat' };
+  const today = todayUtc();
+  if (me.cycleLastClaim === today) return { ok: true, already: true, days: me.cycleDays };
+  const claims = s.cycleClaims ?? (s.cycleClaims = {});
+  const key = `${today}:${address.toLowerCase()}`;
+  const holder = claims[key];
+  if (holder && holder !== id) return { ok: false, reason: 'address_used' };
+  claims[key] = id;
+  me.cycleLastClaim = today;
+  me.cycleDays += 1;
+  save(s);
+  return { ok: true, days: me.cycleDays };
 }
 
 /* ── featured post (manual review) ── */
@@ -254,7 +297,7 @@ export interface SeatStats {
   code: string;
   direct: number;   // seats I brought
   tier2: number;    // seats my invitees brought
-  points: number;   // invites + full set + check-ins + featured bonus
+  points: number;   // invites + full set + check-ins + cycles + featured bonus
   t1: boolean;
   t2: boolean;
   t3: boolean;
@@ -263,6 +306,9 @@ export interface SeatStats {
   checkinDays: number;
   checkedInToday: boolean;
   featured: FeaturedStatus | 'none';
+  taskWallet: string | null;
+  cycleDays: number;
+  cycleClaimedToday: boolean;
 }
 
 export function statsFor(id: string): SeatStats | null {
@@ -283,6 +329,9 @@ export function statsFor(id: string): SeatStats | null {
     checkinDays: me.checkinDays,
     checkedInToday: me.lastCheckin === todayUtc(),
     featured: me.featured?.status ?? 'none',
+    taskWallet: me.taskWallet,
+    cycleDays: me.cycleDays,
+    cycleClaimedToday: me.cycleLastClaim === todayUtc(),
   };
 }
 
@@ -331,8 +380,8 @@ export function seatRank(id: string): { rank: number; total: number } | null {
   return { rank: idx + 1, total: rows.length };
 }
 
-/* Per-source point breakdown for one seat — tasks / invites / daily / featured. */
-export function pointsBreakdown(id: string): { tasks: number; direct: number; tier2: number; daily: number; featured: number; total: number } | null {
+/* Per-source point breakdown for one seat — tasks / invites / daily / cycles / featured. */
+export function pointsBreakdown(id: string): { tasks: number; direct: number; tier2: number; daily: number; cycle: number; featured: number; total: number } | null {
   const s = load();
   const me = s.seats[id];
   if (!me) return null;
@@ -345,6 +394,7 @@ export function pointsBreakdown(id: string): { tasks: number; direct: number; ti
   const directPts = direct * 200;
   const tier2Pts = tier2 * 50;
   const daily = me.checkinDays * CHECKIN_POINTS;
+  const cycle = me.cycleDays * CYCLE_POINTS;
   const featured = me.featured?.status === 'approved' && !me.og ? FEATURED_POINTS : 0;
-  return { tasks, direct: directPts, tier2: tier2Pts, daily, featured, total: tasks + directPts + tier2Pts + daily + featured };
+  return { tasks, direct: directPts, tier2: tier2Pts, daily, cycle, featured, total: tasks + directPts + tier2Pts + daily + cycle + featured };
 }
