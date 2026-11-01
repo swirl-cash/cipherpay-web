@@ -1119,7 +1119,7 @@ export default function GenesisClient() {
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {([
-                ['01', 'Open the dApp', <>Go to <a href="https://swirl.cash/dapp" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--c-cyan)' }}>swirl.cash/dapp</a> and connect your wallet on <b>Ethereum mainnet</b> (testnet does not count).</>],
+                ['01', 'Open the dApp', <>Go to <a href="https://swirl.cash/dapp" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--c-cyan)' }}>swirl.cash/dapp</a> and register your wallet on <b>Ethereum mainnet</b> (testnet does not count).</>],
                 ['02', 'Shield', <>Shield <b>any amount</b> of ETH, USDC or USDT — a small custom amount is fine.</>],
                 ['03', 'Unshield back to yourself', <>Once the shield confirms, unshield it back <b>to your own address</b>. That closes the loop — solo, end to end.</>],
                 ['04', 'Verify here', <>Both sides must land within the <b>same UTC day</b>. Then paste your address and hit VERIFY — we check the pair on-chain and credit +150 vSWIRL. <b>Submit your public EVM address (0x…)</b> — the one that sent the transactions — not your private SWIRL address (swirl1…).</>],
