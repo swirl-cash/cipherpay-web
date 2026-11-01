@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { LogoMark } from '@/components/Logo';
 
 const AIRDROP_TOTAL = '1,050,000';
@@ -120,6 +120,7 @@ export default function GenesisClient() {
   const [cycleAddr, setCycleAddr] = useState('');
   const [cycleBusy, setCycleBusy] = useState(false);
   const [cycleErr, setCycleErr] = useState('');
+  const [cycleHelpOpen, setCycleHelpOpen] = useState(false);
 
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
@@ -882,12 +883,19 @@ export default function GenesisClient() {
                       <div className="gz-task-d">
                         On Ethereum mainnet, shield any amount and unshield it back — one pair, both sides, same UTC day. We verify the pair on-chain against the address you submit. +150 vSWIRL per day · days completed: {me?.cycleDays ?? 0}.
                       </div>
+                      <button
+                        className="gz-btn gz-btn-ghost gz-btn-sm"
+                        style={{ marginTop: 10 }}
+                        onClick={() => setCycleHelpOpen(true)}
+                      >
+                        HOW TO COMPLETE ↗
+                      </button>
                       {!me?.cycleClaimedToday && (
                         <div className="gz-task-act">
                           <div style={{ display: 'flex', gap: 10 }}>
                             <input
                               className="gz-input"
-                              placeholder="your EVM wallet address — 0x…"
+                              placeholder="your public EVM address — 0x…"
                               value={cycleAddr}
                               onChange={(e) => setCycleAddr(e.target.value)}
                               spellCheck={false}
@@ -903,6 +911,9 @@ export default function GenesisClient() {
                           {cycleErr === 'bad_address' && (
                             <div className="gz-err">that is not a valid EVM address — it should look like 0x…</div>
                           )}
+                          <div className="gz-task-d" style={{ marginTop: 8, fontSize: 11 }}>
+                            Submit your <b>public EVM address (0x…)</b> — the wallet that sent the Shield/Unshield transactions. Not your private SWIRL address (swirl1…).
+                          </div>
                           {cycleErr === 'no_shield' && (
                             <div className="gz-err">no mainnet Shield from this address found today (UTC) — shield first, wait for confirmation, then verify</div>
                           )}
@@ -1092,6 +1103,50 @@ export default function GenesisClient() {
         )}
 
       </div>
+
+      {/* D3 how-to modal */}
+      {cycleHelpOpen && (
+        <div
+          onClick={() => setCycleHelpOpen(false)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.65)', backdropFilter: 'blur(3px)', zIndex: 80, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+        >
+          <div className="gz-panel" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 460, width: '100%' }}>
+            <div className="gz-panel-tag">SWIRL://GENESIS/D3 · GUIDE</div>
+            <h2 className="gz-h2" style={{ marginBottom: 6 }}>How to complete the cycle</h2>
+            <p className="gz-desc" style={{ marginBottom: 18 }}>
+              You can do the whole task <b>by yourself</b> — shield to yourself, then unshield back to your
+              own wallet. No transfer to anyone else is needed.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {([
+                ['01', 'Open the dApp', <>Go to <a href="https://swirl.cash/dapp" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--c-cyan)' }}>swirl.cash/dapp</a> and connect your wallet on <b>Ethereum mainnet</b> (testnet does not count).</>],
+                ['02', 'Shield', <>Shield <b>any amount</b> of ETH, USDC or USDT — a small custom amount is fine.</>],
+                ['03', 'Unshield back to yourself', <>Once the shield confirms, unshield it back <b>to your own address</b>. That closes the loop — solo, end to end.</>],
+                ['04', 'Verify here', <>Both sides must land within the <b>same UTC day</b>. Then paste your address and hit VERIFY — we check the pair on-chain and credit +150 vSWIRL. <b>Submit your public EVM address (0x…)</b> — the one that sent the transactions — not your private SWIRL address (swirl1…).</>],
+              ] as Array<[string, string, ReactNode]>).map(([n, t, d]) => (
+                <div key={n} style={{ display: 'flex', gap: 14 }}>
+                  <span className="gz-mono" style={{ color: 'var(--c-gold)', fontSize: 12, fontWeight: 800, paddingTop: 2 }}>{n}</span>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: .5 }}>{t}</div>
+                    <div style={{ fontSize: 12, color: 'var(--c-muted)', lineHeight: 1.6, marginTop: 3 }}>{d}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: 10, marginTop: 20, flexWrap: 'wrap' }}>
+              <a className="gz-btn gz-btn-cy gz-btn-sm" href="https://swirl.cash/dapp" target="_blank" rel="noopener noreferrer">
+                OPEN THE DAPP ↗
+              </a>
+              <button className="gz-btn gz-btn-ghost gz-btn-sm" onClick={() => setCycleHelpOpen(false)}>
+                CLOSE
+              </button>
+            </div>
+            <div className="gz-task-d" style={{ marginTop: 14, fontSize: 11 }}>
+              Mainnet gas applies to both transactions. One address can claim the +150 only once per UTC day.
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* my points breakdown modal */}
       {pointsOpen && myRank?.breakdown && (
